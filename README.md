@@ -107,7 +107,7 @@ deno task test
 
 本次 WSL 客户端网络下未观察到提速。这个结果只描述该客户端的两轮测量。
 
-待处理的缓存行为：相同 ETag 在 GitHub 直连时返回 304；代理命中 CDN 缓存时返回 200，
+初始部署的缓存异常：相同 ETag 在 GitHub 直连时返回 304；代理命中 CDN 缓存时返回 200，
 并重复传输整个文件，响应头为 `Cache-Status: deno; hit`。换用新的查询参数绕开缓存后， 代理返回
 304。实测差异指向 Deno CDN 的缓存命中路径；以上结果记录的是初始部署，当前源码采用下述缓存策略。
 参考：[Deno CDN 缓存说明](https://docs.deno.com/deploy/reference/caching/)。
@@ -124,9 +124,13 @@ deno task test
 修复已通过 WSL Ubuntu 中的 20 项自动测试和 15 项真实 GitHub HTTP 检查；本地代理的浅克隆、 补全历史和
 Git 对象校验通过。这些检查不包含 Deno CDN，部署行为需另外验证。
 
-缓存修复需要发布新部署后验证：先普通 GET 预热，再带相同 ETag 请求同一个 URL，应返回 304
-且无正文；不匹配的 ETag 应返回 200。最后确认普通 GET 仍可命中 CDN，Range 和 Git clone
-正常。不要仅用新查询参数绕开缓存来判断修复是否生效。
+新部署已在 WSL 中验证：curl 复用 HTTP/2 连接，对同一个 URL 先普通 GET 预热，再带相同 ETag 请求，返回
+304 且无正文；弱 ETag、多值和通配符也返回 304。不匹配的 ETag 返回 200，条件响应均绕开 CDN
+缓存；之后普通 GET 仍命中 CDN。Range、条件 Range、浅克隆、补全历史和 Git 对象校验通过。 12 项 curl
+检查全部通过，结果见 [缓存修复实测报告](docs/cache-fix-validation-2026-10-08.json)。
+
+另一轮 urllib HTTP/1.1 检查中，条件请求、HEAD 和 Range 均与上游一致，但没有观察到普通下载的 CDN
+命中。缓存命中会受请求方式和部署节点影响，这两轮结果分别记录在报告中。
 
 ## 工作方式和范围
 

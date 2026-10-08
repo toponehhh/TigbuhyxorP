@@ -1,0 +1,725 @@
+{
+  "checked_at": "2026-10-08T08:46:17.853201+00:00",
+  "environment": "WSL Ubuntu, curl HTTP/2 with connection reuse",
+  "source_commit": "20e03f8b3e0e4cd4846b70436c0580e43ca600d2",
+  "url": "https://ghp.aishow.deno.net/__github__/raw.githubusercontent.com/toponehhh/TigbuhyxorP/main/main.ts",
+  "checks": [
+    {
+      "name": "warm_get",
+      "request_headers": {},
+      "expected_status": 200,
+      "status": 200,
+      "bytes": 8527,
+      "sha256": "f19d99098d439fb6ad6820bb7379386b30ddfa19c6f3a1253ba3d2eb7476eb75",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; hit",
+        "age": "1"
+      },
+      "passed": true
+    },
+    {
+      "name": "warm_get_repeat",
+      "request_headers": {},
+      "expected_status": 200,
+      "status": 200,
+      "bytes": 8527,
+      "sha256": "f19d99098d439fb6ad6820bb7379386b30ddfa19c6f3a1253ba3d2eb7476eb75",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; hit",
+        "age": "1"
+      },
+      "passed": true
+    },
+    {
+      "name": "etag_match",
+      "request_headers": {
+        "If-None-Match": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\""
+      },
+      "expected_status": 304,
+      "status": 304,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; fwd=bypass; detail=non-final-status",
+        "age": "0"
+      },
+      "passed": true
+    },
+    {
+      "name": "etag_match_repeat",
+      "request_headers": {
+        "If-None-Match": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\""
+      },
+      "expected_status": 304,
+      "status": 304,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; fwd=bypass; detail=non-final-status",
+        "age": "0"
+      },
+      "passed": true
+    },
+    {
+      "name": "etag_weak_match",
+      "request_headers": {
+        "If-None-Match": "W/\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\""
+      },
+      "expected_status": 304,
+      "status": 304,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; fwd=bypass; detail=non-final-status",
+        "age": "0"
+      },
+      "passed": true
+    },
+    {
+      "name": "etag_list_match",
+      "request_headers": {
+        "If-None-Match": "\"other\", \"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\""
+      },
+      "expected_status": 304,
+      "status": 304,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; fwd=bypass; detail=non-final-status",
+        "age": "0"
+      },
+      "passed": true
+    },
+    {
+      "name": "etag_wildcard",
+      "request_headers": {
+        "If-None-Match": "*"
+      },
+      "expected_status": 304,
+      "status": 304,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; fwd=bypass; detail=non-final-status",
+        "age": "0"
+      },
+      "passed": true
+    },
+    {
+      "name": "etag_mismatch",
+      "request_headers": {
+        "If-None-Match": "\"other\""
+      },
+      "expected_status": 200,
+      "status": 200,
+      "bytes": 8527,
+      "sha256": "f19d99098d439fb6ad6820bb7379386b30ddfa19c6f3a1253ba3d2eb7476eb75",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; fwd=bypass; detail=not-cacheable",
+        "age": "0"
+      },
+      "passed": true
+    },
+    {
+      "name": "range",
+      "request_headers": {
+        "Range": "bytes=10-15"
+      },
+      "expected_status": 206,
+      "status": 206,
+      "bytes": 6,
+      "sha256": "4673a2306165612576462979eee34149329ab42aad9b580e726a1fae1ce7ab64",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; hit",
+        "age": "3",
+        "content-range": "bytes 10-15/8527"
+      },
+      "passed": true
+    },
+    {
+      "name": "range_if_range_match",
+      "request_headers": {
+        "Range": "bytes=10-15",
+        "If-Range": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\""
+      },
+      "expected_status": 206,
+      "status": 206,
+      "bytes": 6,
+      "sha256": "4673a2306165612576462979eee34149329ab42aad9b580e726a1fae1ce7ab64",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; fwd=bypass; detail=not-cacheable",
+        "age": "0",
+        "content-range": "bytes 10-15/8527"
+      },
+      "passed": true
+    },
+    {
+      "name": "range_if_range_mismatch",
+      "request_headers": {
+        "Range": "bytes=10-15",
+        "If-Range": "\"other\""
+      },
+      "expected_status": 200,
+      "status": 200,
+      "bytes": 8527,
+      "sha256": "f19d99098d439fb6ad6820bb7379386b30ddfa19c6f3a1253ba3d2eb7476eb75",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; fwd=bypass; detail=not-cacheable",
+        "age": "0"
+      },
+      "passed": true
+    },
+    {
+      "name": "ordinary_get_after_conditions",
+      "request_headers": {},
+      "expected_status": 200,
+      "status": 200,
+      "bytes": 8527,
+      "sha256": "f19d99098d439fb6ad6820bb7379386b30ddfa19c6f3a1253ba3d2eb7476eb75",
+      "response_headers": {
+        "etag": "\"07afea9322ce4e80b035067d694a1e24316ba0163e9429cc7fad4f6b880c8e50\"",
+        "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; hit",
+        "age": "4"
+      },
+      "passed": true
+    }
+  ],
+  "passed": 12,
+  "total": 12,
+  "local_validation": {
+    "environment": "WSL Ubuntu, Linux Deno 2.5.0",
+    "static_checks": [
+      "deno fmt --check",
+      "deno lint",
+      "deno check main.ts main_test.ts",
+      "git diff --check"
+    ],
+    "unit_tests": {
+      "passed": 20,
+      "failed": 0
+    },
+    "real_upstream_http_checks": {
+      "passed": 15,
+      "total": 15
+    }
+  },
+  "git_validation": {
+    "repository": "octocat/Hello-World",
+    "commit": "7fd1a60b01f91b314f59955a4e4d4e80d8edf11d",
+    "local_and_deployed_proxy": {
+      "shallow_clone": "passed",
+      "fetch_unshallow": "passed",
+      "fsck_full": "passed"
+    }
+  },
+  "additional_http1_validation": {
+    "environment": "WSL Ubuntu, Python urllib HTTP/1.1",
+    "resource": "https://ghp.aishow.deno.net/__github__/raw.githubusercontent.com/toponehhh/TigbuhyxorP/95f60e6ca1c96e9fc19a1d4c603ade1dce5de7c3/main.ts",
+    "passed": 14,
+    "total": 15,
+    "note": "HTTP conditional requests, HEAD and Range matched upstream. The ordinary download cache-hit check failed: all ordinary requests reported uri-miss/stored. The separate curl HTTP/2 checks above observed CDN hits before and after conditional requests.",
+    "checks": [
+      {
+        "name": "ordinary_download",
+        "method": "GET",
+        "request_headers": {},
+        "upstream": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300",
+            "content-length": "7598"
+          }
+        },
+        "proxy": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=uri-miss; stored",
+            "age": "0",
+            "content-length": "7598"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "ordinary_download_repeat",
+        "method": "GET",
+        "request_headers": {},
+        "upstream": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300",
+            "content-length": "7598"
+          }
+        },
+        "proxy": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=uri-miss; stored",
+            "age": "0",
+            "content-length": "7598"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "etag_match",
+        "method": "GET",
+        "request_headers": {
+          "If-None-Match": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\""
+        },
+        "upstream": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300"
+          }
+        },
+        "proxy": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=bypass; detail=non-final-status",
+            "age": "0"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "etag_match_repeat",
+        "method": "GET",
+        "request_headers": {
+          "If-None-Match": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\""
+        },
+        "upstream": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300"
+          }
+        },
+        "proxy": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=bypass; detail=non-final-status",
+            "age": "0"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "etag_weak_match",
+        "method": "GET",
+        "request_headers": {
+          "If-None-Match": "W/\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\""
+        },
+        "upstream": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300"
+          }
+        },
+        "proxy": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=bypass; detail=non-final-status",
+            "age": "0"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "etag_list_match",
+        "method": "GET",
+        "request_headers": {
+          "If-None-Match": "\"other\", \"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\""
+        },
+        "upstream": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300"
+          }
+        },
+        "proxy": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=bypass; detail=non-final-status",
+            "age": "0"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "etag_wildcard",
+        "method": "GET",
+        "request_headers": {
+          "If-None-Match": "*"
+        },
+        "upstream": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300"
+          }
+        },
+        "proxy": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=bypass; detail=non-final-status",
+            "age": "0"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "etag_mismatch",
+        "method": "GET",
+        "request_headers": {
+          "If-None-Match": "\"other\""
+        },
+        "upstream": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300",
+            "content-length": "7598"
+          }
+        },
+        "proxy": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=bypass; detail=not-cacheable",
+            "age": "0",
+            "content-length": "7598"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "head",
+        "method": "HEAD",
+        "request_headers": {},
+        "upstream": {
+          "status": 200,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300",
+            "content-length": "7598"
+          }
+        },
+        "proxy": {
+          "status": 200,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=uri-miss; stored",
+            "age": "0",
+            "content-length": "7598"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "head_etag_match",
+        "method": "HEAD",
+        "request_headers": {
+          "If-None-Match": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\""
+        },
+        "upstream": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300"
+          }
+        },
+        "proxy": {
+          "status": 304,
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=bypass; detail=non-final-status",
+            "age": "0"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "modified_since",
+        "method": "GET",
+        "request_headers": {
+          "If-Modified-Since": "Wed, 01 Jan 2025 00:00:00 GMT"
+        },
+        "upstream": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300",
+            "content-length": "7598"
+          }
+        },
+        "proxy": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=bypass; detail=not-cacheable",
+            "age": "0",
+            "content-length": "7598"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "range",
+        "method": "GET",
+        "request_headers": {
+          "Range": "bytes=10-15"
+        },
+        "upstream": {
+          "status": 206,
+          "bytes": 6,
+          "sha256": "4673a2306165612576462979eee34149329ab42aad9b580e726a1fae1ce7ab64",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300",
+            "content-range": "bytes 10-15/7598",
+            "content-length": "6"
+          }
+        },
+        "proxy": {
+          "status": 206,
+          "bytes": 6,
+          "sha256": "4673a2306165612576462979eee34149329ab42aad9b580e726a1fae1ce7ab64",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=uri-miss; stored",
+            "age": "0",
+            "content-range": "bytes 10-15/7598",
+            "content-length": "6"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "range_if_range_match",
+        "method": "GET",
+        "request_headers": {
+          "Range": "bytes=10-15",
+          "If-Range": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\""
+        },
+        "upstream": {
+          "status": 206,
+          "bytes": 6,
+          "sha256": "4673a2306165612576462979eee34149329ab42aad9b580e726a1fae1ce7ab64",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300",
+            "content-range": "bytes 10-15/7598",
+            "content-length": "6"
+          }
+        },
+        "proxy": {
+          "status": 206,
+          "bytes": 6,
+          "sha256": "4673a2306165612576462979eee34149329ab42aad9b580e726a1fae1ce7ab64",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=bypass; detail=not-cacheable",
+            "age": "0",
+            "content-range": "bytes 10-15/7598",
+            "content-length": "6"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "range_if_range_mismatch",
+        "method": "GET",
+        "request_headers": {
+          "Range": "bytes=10-15",
+          "If-Range": "\"other\""
+        },
+        "upstream": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300",
+            "content-length": "7598"
+          }
+        },
+        "proxy": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=bypass; detail=not-cacheable",
+            "age": "0",
+            "content-length": "7598"
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "ordinary_download_after_conditions",
+        "method": "GET",
+        "request_headers": {},
+        "upstream": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "Authorization,Accept-Encoding",
+            "cache-control": "max-age=300",
+            "content-length": "7598"
+          }
+        },
+        "proxy": {
+          "status": 200,
+          "bytes": 7598,
+          "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+          "headers": {
+            "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+            "vary": "authorization, accept-encoding, if-none-match, if-modified-since, if-match, if-unmodified-since, if-range",
+            "cache-control": "max-age=300",
+            "cache-status": "deno; fwd=uri-miss; stored",
+            "age": "0",
+            "content-length": "7598"
+          }
+        },
+        "passed": false
+      }
+    ]
+  }
+}
