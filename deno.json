@@ -1,0 +1,18 @@
+{
+  "tasks": {
+    "start": "deno run --allow-net main.ts",
+    "dev": "deno run --allow-net --watch main.ts",
+    "check": "deno fmt --check && deno lint && deno check main.ts main_test.ts",
+    "test": "deno test main_test.ts"
+  },
+  "fmt": {
+    "lineWidth": 100
+  },
+  "exclude": [".tools", ".tmp"],
+  "deploy": {
+    "runtime": {
+      "type": "dynamic",
+      "entrypoint": "./main.ts"
+    }
+  }
+}
