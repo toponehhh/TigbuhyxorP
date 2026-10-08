@@ -124,6 +124,87 @@ Deno.test("HEAD 和 304 保留元数据且没有响应体", async () => {
   }
 });
 
+Deno.test("普通下载合并 Vary 并保留上游缓存策略和 ETag", async () => {
+  const proxy = createProxy({
+    fetcher: () =>
+      Promise.resolve(
+        new Response("file", {
+          headers: {
+            "vary": "Authorization, Accept-Encoding, IF-NONE-MATCH",
+            "cache-control": "public, max-age=300",
+            "deno-cdn-cache-control": "public, s-maxage=600",
+            "etag": '"v1"',
+          },
+        }),
+      ),
+  });
+  const response = await proxy(new Request(`${ORIGIN}/owner/repo/raw/main/file`));
+  deepEqual(response.headers.get("vary")?.split(", "), [
+    "authorization",
+    "accept-encoding",
+    "if-none-match",
+    "if-modified-since",
+    "if-match",
+    "if-unmodified-since",
+    "if-range",
+  ]);
+  equal(response.headers.get("cache-control"), "public, max-age=300");
+  equal(response.headers.get("deno-cdn-cache-control"), "public, s-maxage=600");
+  equal(response.headers.get("etag"), '"v1"');
+  equal(await response.text(), "file");
+});
+
+Deno.test("带条件的 200、304、412 不进入 CDN 且原样转发上游结果", async () => {
+  for (
+    const [name, value, status] of [
+      ["if-none-match", 'W/"v1", "v2"', 304],
+      ["if-none-match", "*", 304],
+      ["if-none-match", '"old"', 200],
+      ["if-modified-since", "Wed, 01 Jan 2025 00:00:00 GMT", 304],
+      ["if-match", '"old"', 412],
+      ["if-unmodified-since", "Wed, 01 Jan 2025 00:00:00 GMT", 412],
+      ["if-range", '"old"', 200],
+    ] as const
+  ) {
+    const body = status === 304 ? null : "upstream response";
+    const proxy = createProxy({
+      fetcher: (_target, init) => {
+        equal(new Headers(init.headers).get(name), value);
+        return Promise.resolve(
+          new Response(init.method === "HEAD" ? null : body, {
+            status,
+            headers: {
+              "cache-control": "public, max-age=300",
+              "deno-cdn-cache-control": "public, s-maxage=600",
+              "etag": '"v1"',
+            },
+          }),
+        );
+      },
+    });
+    for (const method of ["GET", "HEAD"]) {
+      const response = await proxy(
+        new Request(`${ORIGIN}/owner/repo/raw/main/file`, { method, headers: { [name]: value } }),
+      );
+      equal(response.status, status);
+      equal(response.headers.get("deno-cdn-cache-control"), "no-store");
+      equal(response.headers.get("cache-control"), "public, max-age=300");
+      equal(response.headers.get("etag"), '"v1"');
+      equal(await response.text(), method === "HEAD" ? "" : body ?? "");
+    }
+  }
+});
+
+Deno.test("Vary 星号保持不变，普通下载不被强制禁用 CDN 缓存", async () => {
+  const proxy = createProxy({
+    fetcher: () => Promise.resolve(new Response("file", { headers: { "vary": "*" } })),
+  });
+  const response = await proxy(new Request(`${ORIGIN}/owner/repo/raw/main/file`));
+  equal(response.headers.get("vary"), "*");
+  equal(response.headers.get("deno-cdn-cache-control"), null);
+  equal(await response.text(), "file");
+});
+
 Deno.test("GitHub / raw / archive / Release 跳转继续经过代理", async () => {
   const redirects = [
     [

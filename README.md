@@ -109,8 +109,24 @@ deno task test
 
 待处理的缓存行为：相同 ETag 在 GitHub 直连时返回 304；代理命中 CDN 缓存时返回 200，
 并重复传输整个文件，响应头为 `Cache-Status: deno; hit`。换用新的查询参数绕开缓存后， 代理返回
-304。实测差异指向 Deno CDN 的缓存命中路径，当前仍需处理该行为。
+304。实测差异指向 Deno CDN 的缓存命中路径；以上结果记录的是初始部署，当前源码采用下述缓存策略。
 参考：[Deno CDN 缓存说明](https://docs.deno.com/deploy/reference/caching/)。
+
+## 缓存策略
+
+- 在上游原有 `Vary` 中合并 `If-None-Match`、`If-Modified-Since`、`If-Match`、 `If-Unmodified-Since`
+  和 `If-Range`，防止普通下载的 CDN 缓存直接用于带条件的请求。
+- 带上述条件头的响应设置 `Deno-CDN-Cache-Control: no-store`，包括上游返回 200、304、206 和 412
+  的情况。条件头交给 GitHub 判断，响应状态和正文照常转发。
+- 普通下载仍使用上游缓存策略；保留 `ETag`、`Last-Modified` 和客户端 `Cache-Control`。 上游已有
+  `Vary: *` 时保持不变。
+
+修复已通过 WSL Ubuntu 中的 20 项自动测试和 15 项真实 GitHub HTTP 检查；本地代理的浅克隆、 补全历史和
+Git 对象校验通过。这些检查不包含 Deno CDN，部署行为需另外验证。
+
+缓存修复需要发布新部署后验证：先普通 GET 预热，再带相同 ETag 请求同一个 URL，应返回 304
+且无正文；不匹配的 ETag 应返回 200。最后确认普通 GET 仍可命中 CDN，Range 和 Git clone
+正常。不要仅用新查询参数绕开缓存来判断修复是否生效。
 
 ## 工作方式和范围
 

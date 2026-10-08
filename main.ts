@@ -40,6 +40,13 @@ const HOP_HEADERS = [
   "upgrade",
 ];
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
+const CONDITIONAL_HEADERS = [
+  "if-none-match",
+  "if-modified-since",
+  "if-match",
+  "if-unmodified-since",
+  "if-range",
+];
 
 type Fetcher = (url: URL, init: RequestInit) => Promise<Response>;
 
@@ -56,6 +63,22 @@ function cleanHeaders(source: Headers): Headers {
   }
   for (const name of HOP_HEADERS) headers.delete(name);
   return headers;
+}
+
+function applyCachePolicy(headers: Headers, requestHeaders: Headers): void {
+  const vary = new Set(
+    (headers.get("vary") ?? "").split(",").map((name) => name.trim().toLowerCase()).filter(Boolean),
+  );
+  // CDN 可能在进入脚本前复用普通 GET 的 200；用 Vary 隔离条件请求。
+  if (!vary.has("*")) {
+    for (const name of CONDITIONAL_HEADERS) vary.add(name);
+    headers.set("vary", [...vary].join(", "));
+  }
+  // 即使上游返回 200（文件已更新），也不缓存这次带条件的响应。
+  // 客户端缓存仍遵循上游 Cache-Control，普通下载仍可使用 Deno CDN。
+  if (CONDITIONAL_HEADERS.some((name) => requestHeaders.has(name))) {
+    headers.set("deno-cdn-cache-control", "no-store");
+  }
 }
 
 function isAllowed(url: URL): boolean {
@@ -200,6 +223,7 @@ export function createProxy(
       responseHeaders.set("location", proxyLocation(redirect, incoming));
     }
 
+    applyCachePolicy(responseHeaders, request.headers);
     // 直接转发二进制流，保留状态码、Range、ETag、Content-Disposition 和 Git 响应。
     return new Response(upstream.body, {
       status: upstream.status,
