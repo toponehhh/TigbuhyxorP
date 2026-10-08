@@ -147,6 +147,9 @@ Deno.test("普通下载合并 Vary 并保留上游缓存策略和 ETag", async (
     "if-match",
     "if-unmodified-since",
     "if-range",
+    "accept",
+    "sec-fetch-dest",
+    "x-github-proxy-web",
   ]);
   equal(response.headers.get("cache-control"), "public, max-age=300");
   equal(response.headers.get("deno-cdn-cache-control"), "public, s-maxage=600");

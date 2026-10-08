@@ -1,0 +1,151 @@
+{
+  "checked_at": "2026-10-08T13:07:11.261Z",
+  "validation_target": "local working tree containing the public webpage proxy changes",
+  "base_commit": "d52870b2b9f4e68a776b9a29a07e4140180b3c29",
+  "environment": "WSL Ubuntu; Linux Deno 2.5.0 and Chromium",
+  "unit_tests": {
+    "passed": 31,
+    "failed": 0
+  },
+  "browser": {
+    "version": "156.0.8078.4",
+    "playwright": "1.64.0",
+    "client_network_rule": "abort all HTTP(S) requests whose origin differs from the local proxy origin",
+    "passed": 3,
+    "total": 3,
+    "pages": [
+      {
+        "path": "/intel/AI-Playground/releases/tag/v3.2.1-beta",
+        "title": "Release AI Playground Version v3.2.1 Beta \u00b7 intel/AI-Playground \u00b7 GitHub",
+        "passed": true,
+        "checks": [
+          "main HTML and browser proxy script loaded",
+          "release attachments and dynamic fetch stay on proxy origin",
+          "stylesheets and dependencies remain same-origin; no CSP or JS errors"
+        ],
+        "direct_external_requests": 0,
+        "csp_violations": 0,
+        "javascript_errors": 0,
+        "responses_by_type": {
+          "document": 1,
+          "script": 104,
+          "stylesheet": 23,
+          "image": 4,
+          "fetch": 3,
+          "manifest": 1
+        },
+        "script_style_image_http_errors": 0
+      },
+      {
+        "path": "/intel/AI-Playground",
+        "title": "AI-Playground/readme.md at main \u00b7 intel/AI-Playground \u00b7 GitHub",
+        "passed": true,
+        "checks": [
+          "main HTML and browser proxy script loaded",
+          "dynamically created README image loads through proxy",
+          "repository link navigates to README file viewer through proxy",
+          "stylesheets and dependencies remain same-origin; no CSP or JS errors"
+        ],
+        "direct_external_requests": 0,
+        "csp_violations": 0,
+        "javascript_errors": 0,
+        "responses_by_type": {
+          "document": 1,
+          "script": 138,
+          "stylesheet": 25,
+          "image": 35,
+          "fetch": 14,
+          "manifest": 1
+        },
+        "script_style_image_http_errors": 0
+      },
+      {
+        "path": "/toponehhh/TigbuhyxorP/blob/main/main.ts",
+        "title": "TigbuhyxorP/main.ts at main \u00b7 toponehhh/TigbuhyxorP \u00b7 GitHub",
+        "passed": true,
+        "checks": [
+          "main HTML and browser proxy script loaded",
+          "browser blob URL renders file viewer",
+          "stylesheets and dependencies remain same-origin; no CSP or JS errors"
+        ],
+        "direct_external_requests": 0,
+        "csp_violations": 0,
+        "javascript_errors": 0,
+        "responses_by_type": {
+          "document": 1,
+          "script": 133,
+          "stylesheet": 25,
+          "fetch": 6,
+          "manifest": 1,
+          "image": 1
+        },
+        "script_style_image_http_errors": 0
+      }
+    ]
+  },
+  "download_conditions": {
+    "passed": 15,
+    "checks": [
+      "ordinary_download",
+      "ordinary_download_repeat",
+      "etag_match",
+      "etag_match_repeat",
+      "etag_weak_match",
+      "etag_list_match",
+      "etag_wildcard",
+      "etag_mismatch",
+      "head",
+      "head_etag_match",
+      "modified_since",
+      "range",
+      "range_if_range_match",
+      "range_if_range_mismatch",
+      "ordinary_download_after_conditions"
+    ]
+  },
+  "release_binary": {
+    "passed": true,
+    "size": 2566310,
+    "sha256": "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e",
+    "range_statuses": [
+      206,
+      206
+    ],
+    "redirects": [
+      {
+        "status": 302,
+        "path": "/__github__/release-assets.githubusercontent.com/github-production-release-asset/53631945/c3fb96a4-463b-40d5-8a6b-ee77f4cd30fd"
+      },
+      {
+        "status": 302,
+        "path": "/__github__/release-assets.githubusercontent.com/github-production-release-asset/53631945/c3fb96a4-463b-40d5-8a6b-ee77f4cd30fd"
+      }
+    ]
+  },
+  "intel_installer": {
+    "passed": true,
+    "method": "HEAD",
+    "status": 200,
+    "redirects": [
+      {
+        "status": 302,
+        "path": "/__github__/release-assets.githubusercontent.com/github-production-release-asset/826984591/ffdc6b29-17af-4795-9c25-e2d02ae74fad"
+      }
+    ],
+    "large_file_body_downloaded": false
+  },
+  "git": {
+    "passed": true,
+    "clone": "shallow Git Smart HTTP via local proxy",
+    "fetch": "unshallow",
+    "fsck": "passed",
+    "head": "7fd1a60b01f91b314f59955a4e4d4e80d8edf11d",
+    "commits": 3
+  },
+  "boundaries": [
+    "Tests exercise the local new code; this report does not validate a redeployed Deno CDN.",
+    "Browser isolation validates independence from client-to-GitHub access; it does not emulate Shanghai Telecom-to-Deno transport quality.",
+    "The optional anonymous /_global-navigation/payloads.json request returns upstream 404; repository, file and Release content remains functional.",
+    "Authenticated browser sessions and webpage write operations are outside the supported public browsing scope."
+  ]
+}

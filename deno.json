@@ -1,9 +1,12 @@
 {
+  "imports": {
+    "parse5": "npm:parse5@8.0.0"
+  },
   "tasks": {
     "start": "deno run --allow-net main.ts",
     "dev": "deno run --allow-net --watch main.ts",
-    "check": "deno fmt --check && deno lint && deno check main.ts main_test.ts",
-    "test": "deno test main_test.ts"
+    "check": "deno fmt --check && deno lint && deno check main.ts main_test.ts web_proxy_test.ts",
+    "test": "deno test main_test.ts web_proxy_test.ts"
   },
   "fmt": {
     "lineWidth": 100

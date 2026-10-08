@@ -1,14 +1,13 @@
-// GitHub 下载 / Git Smart HTTP 代理，无第三方依赖。
-const HOST_PREFIX = "/__github__/";
-const ALLOWED_HOSTS = new Set([
-  "github.com",
-  "raw.githubusercontent.com",
-  "codeload.github.com",
-  "release-assets.githubusercontent.com",
-  "objects.githubusercontent.com",
-  "github-releases.githubusercontent.com",
-  "media.githubusercontent.com",
-]);
+// GitHub 公开网页、下载和 Git Smart HTTP 代理。
+import { BROWSER_CLIENT } from "./browser_client.ts";
+import {
+  BROWSER_SCRIPT,
+  isAllowed,
+  proxyLocation,
+  rewriteAbsoluteUrls,
+  upstreamUrl,
+} from "./proxy_urls.ts";
+import { expectsWebContent, rewriteWebResponse } from "./web_proxy.ts";
 
 const REQUEST_HEADERS = [
   "accept",
@@ -26,6 +25,11 @@ const REQUEST_HEADERS = [
   "if-unmodified-since",
   "range",
   "user-agent",
+  "github-verified-fetch",
+  "x-requested-with",
+  "x-pjax",
+  "x-pjax-container",
+  "turbo-frame",
 ];
 
 const HOP_HEADERS = [
@@ -72,6 +76,8 @@ function applyCachePolicy(headers: Headers, requestHeaders: Headers): void {
   // CDN 可能在进入脚本前复用普通 GET 的 200；用 Vary 隔离条件请求。
   if (!vary.has("*")) {
     for (const name of CONDITIONAL_HEADERS) vary.add(name);
+    // 浏览器的 blob 查看页与命令行 raw 下载不能共用缓存。
+    for (const name of ["accept", "sec-fetch-dest", "x-github-proxy-web"]) vary.add(name);
     headers.set("vary", [...vary].join(", "));
   }
   // 即使上游返回 200（文件已更新），也不缓存这次带条件的响应。
@@ -79,43 +85,6 @@ function applyCachePolicy(headers: Headers, requestHeaders: Headers): void {
   if (CONDITIONAL_HEADERS.some((name) => requestHeaders.has(name))) {
     headers.set("deno-cdn-cache-control", "no-store");
   }
-}
-
-function isAllowed(url: URL): boolean {
-  return url.protocol === "https:" && ALLOWED_HOSTS.has(url.hostname) &&
-    !url.port && !url.username && !url.password;
-}
-
-function upstreamUrl(incoming: URL): URL | null {
-  const target = new URL("https://github.com");
-  // 设置 pathname 而非用路径解析 URL，避免 //example.com 改变上游主机。
-  target.pathname = incoming.pathname;
-  target.search = incoming.search;
-
-  if (incoming.pathname.startsWith(HOST_PREFIX)) {
-    const route = incoming.pathname.slice(HOST_PREFIX.length);
-    const separator = route.indexOf("/");
-    const host = separator < 0 ? route : route.slice(0, separator);
-    if (!ALLOWED_HOSTS.has(host)) return null;
-    target.hostname = host;
-    target.pathname = separator < 0 ? "/" : route.slice(separator);
-  }
-
-  // GitHub 的 blob 页面链接也可直接下载。由 GitHub 自己解析分支和文件路径。
-  if (target.hostname === "github.com") {
-    target.pathname = target.pathname.replace(/^(\/[^/]+\/[^/]+)\/blob\//, "$1/raw/");
-  }
-  return target;
-}
-
-function proxyLocation(target: URL, incoming: URL): string {
-  const location = new URL(incoming.origin);
-  location.pathname = target.hostname === "github.com"
-    ? target.pathname
-    : `${HOST_PREFIX}${target.hostname}${target.pathname}`;
-  location.search = target.search;
-  location.hash = target.hash;
-  return location.href;
 }
 
 function textResponse(message: string, status: number, method: string): Response {
@@ -133,8 +102,19 @@ export function createProxy(
 ): (request: Request) => Promise<Response> {
   return async (request) => {
     const incoming = new URL(request.url);
-    const target = upstreamUrl(incoming);
-    if (!target) return textResponse("只允许代理 GitHub 下载域名。\n", 403, request.method);
+    if (incoming.pathname === BROWSER_SCRIPT) {
+      if (!["GET", "HEAD"].includes(request.method)) {
+        return textResponse("只支持 GET / HEAD。\n", 405, request.method);
+      }
+      return new Response(request.method === "HEAD" ? null : BROWSER_CLIENT, {
+        headers: { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-store" },
+      });
+    }
+    const browserRequest = request.headers.has("sec-fetch-dest") ||
+      request.headers.get("x-github-proxy-web") === "1" ||
+      (request.headers.get("accept") ?? "").includes("text/html");
+    const target = upstreamUrl(incoming, browserRequest);
+    if (!target) return textResponse("只允许代理指定的 GitHub 及资源域名。\n", 403, request.method);
 
     const uploadPack = target.hostname === "github.com" &&
       /^\/[^/]+\/[^/]+\/git-upload-pack$/.test(target.pathname);
@@ -153,9 +133,11 @@ export function createProxy(
 
     if (incoming.pathname === "/") {
       return textResponse(
-        `GitHub 下载 / Git clone 代理\n\n` +
+        `GitHub 公开网页 / 下载 / Git clone 代理\n\n` +
           `将 GitHub URL 中的 github.com 替换为 ${incoming.host}，保留其余路径和参数。\n\n` +
           `下载文件：${incoming.origin}/OWNER/REPO/blob/main/path/to/file\n` +
+          `浏览仓库：${incoming.origin}/OWNER/REPO\n` +
+          `浏览 Release：${incoming.origin}/OWNER/REPO/releases/tag/TAG\n` +
           `Release：${incoming.origin}/OWNER/REPO/releases/download/TAG/FILE\n` +
           `源码 ZIP：${incoming.origin}/OWNER/REPO/archive/refs/heads/main.zip\n` +
           `克隆仓库：git clone ${incoming.origin}/OWNER/REPO.git\n` +
@@ -174,15 +156,24 @@ export function createProxy(
     // 不转发代理站点的 Cookie、Host、Origin；认证信息仅发往 github.com。
     if (target.hostname !== "github.com") headers.delete("authorization");
     if (request.method !== "POST") headers.delete("content-length");
+    // 文本会被改写，不能把客户端的代理 ETag 发给原站，或返回未经改写的局部文本。
+    const webContent = expectsWebContent(request, target);
+    if (webContent) {
+      for (const name of [...CONDITIONAL_HEADERS, "range"]) {
+        headers.delete(name);
+      }
+    }
     headers.set("accept-encoding", "identity");
     if (!headers.has("user-agent")) headers.set("user-agent", "GitHub-Deno-Proxy");
 
     const timeout = new AbortController();
     const timer = setTimeout(() => timeout.abort(), headerTimeoutMs);
+    // 改写文本的 HEAD 也需要计算与 GET 相同的长度和代理 ETag。
+    const upstreamMethod = request.method === "HEAD" && webContent ? "GET" : request.method;
     let upstream: Response;
     try {
       upstream = await fetcher(target, {
-        method: request.method,
+        method: upstreamMethod,
         headers,
         body: request.method === "POST" ? request.body : undefined,
         // 必须自己改写 Location，否则客户端会绕过代理直连 GitHub 下载域名。
@@ -201,8 +192,10 @@ export function createProxy(
 
     const responseHeaders = cleanHeaders(upstream.headers);
     responseHeaders.delete("set-cookie");
+    const link = responseHeaders.get("link");
+    if (link) responseHeaders.set("link", rewriteAbsoluteUrls(link, target, incoming));
     // fetch 会自动解压；上游即使忽略 identity，也不能返回旧的压缩长度和编码。
-    if (request.method !== "HEAD" && responseHeaders.has("content-encoding")) {
+    if (upstreamMethod !== "HEAD" && responseHeaders.has("content-encoding")) {
       responseHeaders.delete("content-encoding");
       responseHeaders.delete("content-length");
     }
@@ -224,8 +217,11 @@ export function createProxy(
     }
 
     applyCachePolicy(responseHeaders, request.headers);
+    const webResponse = await rewriteWebResponse(upstream, responseHeaders, target, request);
+    if (webResponse) return webResponse;
+    if (request.method === "HEAD") await upstream.body?.cancel();
     // 直接转发二进制流，保留状态码、Range、ETag、Content-Disposition 和 Git 响应。
-    return new Response(upstream.body, {
+    return new Response(request.method === "HEAD" ? null : upstream.body, {
       status: upstream.status,
       statusText: upstream.statusText,
       headers: responseHeaders,
