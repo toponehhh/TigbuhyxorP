@@ -1,0 +1,350 @@
+{
+  "schema_version": 1,
+  "tested_at": "2026-10-08T15:20:21+08:00",
+  "deployment": "https://ghp.aishow.deno.net/",
+  "client_environment": "WSL Ubuntu, Linux 6.6.87.2, Git 2.43.0, Python 3 and curl",
+  "source_commit": "95f60e6ca1c96e9fc19a1d4c603ade1dce5de7c3",
+  "http": {
+    "url": "https://ghp.aishow.deno.net",
+    "environment": "WSL Ubuntu / Linux Python 3",
+    "passed": 10,
+    "total": 11,
+    "results": [
+      {
+        "name": "HTTPS homepage",
+        "passed": true,
+        "seconds": 0.991,
+        "status": 200,
+        "bytes": 471,
+        "server": "deployd"
+      },
+      {
+        "name": "blob download matches committed source",
+        "passed": true,
+        "seconds": 2.232,
+        "status": 200,
+        "bytes": 7598,
+        "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+        "redirects": [
+          {
+            "status": 302,
+            "upstream": "raw.githubusercontent.com"
+          }
+        ]
+      },
+      {
+        "name": "raw download",
+        "passed": true,
+        "seconds": 0.861,
+        "status": 200,
+        "bytes": 7598,
+        "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\""
+      },
+      {
+        "name": "archive download and ZIP CRC",
+        "passed": true,
+        "seconds": 1.985,
+        "status": 200,
+        "bytes": 351,
+        "zip_crc": "passed",
+        "redirects": [
+          {
+            "status": 302,
+            "upstream": "codeload.github.com"
+          }
+        ]
+      },
+      {
+        "name": "Release download and SHA-256",
+        "passed": true,
+        "seconds": 1.88,
+        "status": 200,
+        "bytes": 177,
+        "sha256": "passed",
+        "redirects": [
+          {
+            "status": 302,
+            "upstream": "release-assets.githubusercontent.com"
+          }
+        ],
+        "filename": "attachment; filename=deno-x86_64-pc-windows-msvc.zip.sha256sum"
+      },
+      {
+        "name": "Range download",
+        "passed": true,
+        "seconds": 3.624,
+        "status": 206,
+        "bytes": 16,
+        "content_range": "bytes 0-15/177"
+      },
+      {
+        "name": "HEAD",
+        "passed": true,
+        "seconds": 1.793,
+        "status": 200,
+        "body_bytes": 0,
+        "content_length": "177"
+      },
+      {
+        "name": "ETag conditional request",
+        "passed": false,
+        "seconds": 1.721,
+        "error": "Expected HTTP 304, got HTTP 200"
+      },
+      {
+        "name": "upstream 404",
+        "passed": true,
+        "seconds": 1.904,
+        "status": 404
+      },
+      {
+        "name": "unknown upstream domain is rejected",
+        "passed": true,
+        "seconds": 0.873,
+        "status": 403
+      },
+      {
+        "name": "unsupported POST is rejected",
+        "passed": true,
+        "seconds": 0.9,
+        "status": 405
+      }
+    ]
+  },
+  "git": {
+    "passed": true,
+    "checks": [
+      "HTTPS shallow clone",
+      "unshallow fetch",
+      "Git object integrity",
+      "own repository full clone",
+      "commit and file equality",
+      "URL without .git suffix"
+    ]
+  },
+  "resume": {
+    "check": "real interrupted download and curl resume",
+    "passed": true,
+    "first_status": 206,
+    "resume_status": 206,
+    "initial_bytes": 65536,
+    "resumed_bytes": 2500774,
+    "complete_bytes": 2566310,
+    "sha256": "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e"
+  },
+  "benchmark": {
+    "environment": "WSL Ubuntu / Linux curl",
+    "asset": "ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz",
+    "runs": [
+      {
+        "variant": "direct",
+        "round": 1,
+        "passed": true,
+        "status": 200,
+        "bytes": 2566310,
+        "total_seconds": 3.046889,
+        "first_byte_seconds": 1.77501,
+        "bytes_per_second": 842272.0,
+        "sha256": "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e",
+        "gzip_crc": "passed"
+      },
+      {
+        "variant": "proxy",
+        "round": 1,
+        "passed": true,
+        "status": 200,
+        "bytes": 2566310,
+        "total_seconds": 3.429516,
+        "first_byte_seconds": 1.188867,
+        "bytes_per_second": 748300.0,
+        "sha256": "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e",
+        "gzip_crc": "passed"
+      },
+      {
+        "variant": "proxy",
+        "round": 2,
+        "passed": true,
+        "status": 200,
+        "bytes": 2566310,
+        "total_seconds": 3.277825,
+        "first_byte_seconds": 1.106731,
+        "bytes_per_second": 782930.0,
+        "sha256": "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e",
+        "gzip_crc": "passed"
+      },
+      {
+        "variant": "direct",
+        "round": 2,
+        "passed": true,
+        "status": 200,
+        "bytes": 2566310,
+        "total_seconds": 2.979508,
+        "first_byte_seconds": 1.742465,
+        "bytes_per_second": 861320.0,
+        "sha256": "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e",
+        "gzip_crc": "passed"
+      }
+    ],
+    "direct": {
+      "successful_runs": 2,
+      "mean_total_seconds": 3.013,
+      "mean_bytes_per_second": 851796
+    },
+    "proxy": {
+      "successful_runs": 2,
+      "mean_total_seconds": 3.354,
+      "mean_bytes_per_second": 765615
+    },
+    "all_artifacts_identical": true
+  },
+  "etag_diagnostics": [
+    {
+      "variant": "direct",
+      "request": "initial",
+      "status": 200,
+      "bytes": 7598,
+      "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+      "headers": {
+        "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+        "cache-control": "max-age=300",
+        "cache-status": null,
+        "age": null,
+        "vary": "Authorization,Accept-Encoding",
+        "content-encoding": null,
+        "content-length": "7598",
+        "x-cache": "HIT"
+      }
+    },
+    {
+      "variant": "direct",
+      "request": "If-None-Match",
+      "sent_etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+      "status": 304,
+      "bytes": 0,
+      "sha256": null,
+      "headers": {
+        "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+        "cache-control": "max-age=300",
+        "cache-status": null,
+        "age": null,
+        "vary": "Authorization,Accept-Encoding",
+        "content-encoding": null,
+        "content-length": null,
+        "x-cache": "HIT"
+      }
+    },
+    {
+      "variant": "direct",
+      "request": "If-None-Match and no-cache",
+      "sent_etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+      "status": 304,
+      "bytes": 0,
+      "sha256": null,
+      "headers": {
+        "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+        "cache-control": "max-age=300",
+        "cache-status": null,
+        "age": null,
+        "vary": "Authorization,Accept-Encoding",
+        "content-encoding": null,
+        "content-length": null,
+        "x-cache": "HIT"
+      }
+    },
+    {
+      "variant": "direct",
+      "request": "If-None-Match and cache-buster",
+      "sent_etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+      "status": 304,
+      "bytes": 0,
+      "sha256": null,
+      "headers": {
+        "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+        "cache-control": "max-age=300",
+        "cache-status": null,
+        "age": null,
+        "vary": "Authorization,Accept-Encoding",
+        "content-encoding": null,
+        "content-length": null,
+        "x-cache": "HIT"
+      }
+    },
+    {
+      "variant": "proxy",
+      "request": "initial",
+      "status": 200,
+      "bytes": 7598,
+      "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+      "headers": {
+        "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; fwd=uri-miss; stored",
+        "age": "0",
+        "vary": "Authorization,Accept-Encoding",
+        "content-encoding": null,
+        "content-length": "7598",
+        "x-cache": "HIT"
+      }
+    },
+    {
+      "variant": "proxy",
+      "request": "If-None-Match",
+      "sent_etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+      "status": 200,
+      "bytes": 7598,
+      "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+      "headers": {
+        "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; hit",
+        "age": "1",
+        "vary": "Authorization,Accept-Encoding",
+        "content-encoding": null,
+        "content-length": "7598",
+        "x-cache": "HIT"
+      }
+    },
+    {
+      "variant": "proxy",
+      "request": "If-None-Match and no-cache",
+      "sent_etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+      "status": 200,
+      "bytes": 7598,
+      "sha256": "44f3da314ec66a42b029606e65abbf1729f678e5a23ecb8c4156549064767aa0",
+      "headers": {
+        "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; hit",
+        "age": "2",
+        "vary": "Authorization,Accept-Encoding",
+        "content-encoding": null,
+        "content-length": "7598",
+        "x-cache": "HIT"
+      }
+    },
+    {
+      "variant": "proxy",
+      "request": "If-None-Match and cache-buster",
+      "sent_etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+      "status": 304,
+      "bytes": 0,
+      "sha256": null,
+      "headers": {
+        "etag": "\"b17df3f4a91b43c13b68fc3bd3bf9f6c525ff9099b759e1a4807cefae76c3fa6\"",
+        "cache-control": "max-age=300",
+        "cache-status": "deno; fwd=bypass; detail=non-final-status",
+        "age": "0",
+        "vary": "Authorization,Accept-Encoding",
+        "content-encoding": null,
+        "content-length": null,
+        "x-cache": "HIT"
+      }
+    }
+  ],
+  "findings": [
+    "Core HTTPS downloads and Git clone/fetch succeeded; archive and binary integrity checks passed.",
+    "The same ETag yielded 304 directly from GitHub, 200 for a proxy CDN cache hit, and 304 through the proxy with a fresh query string. The observed difference points to the CDN cache-hit path.",
+    "For the 2,566,310-byte Release asset, two direct downloads averaged 3.013 seconds and two proxied downloads averaged 3.354 seconds. No speed improvement was observed in this WSL client environment."
+  ],
+  "cache_documentation": "https://docs.deno.com/deploy/reference/caching/"
+}
