@@ -1,0 +1,182 @@
+{
+  "checked_at": "2026-10-23T13:59:42.539492+00:00",
+  "base_commit": "32e668ef4a23991d9331a86f9fa4ec1618464070",
+  "target": "Cloudflare Pages build and local Wrangler/workerd runtime in WSL Ubuntu",
+  "runtime": {
+    "node": "22.23.3",
+    "wrangler": "4.152.0",
+    "miniflare": "5.20261019.2-beta",
+    "workerd": "1.20261019.1",
+    "compatibility_date": "2026-10-01"
+  },
+  "build": {
+    "entry": "worker.ts",
+    "output": "dist/_worker.js",
+    "bytes": 196501,
+    "sha256": "883443e97a0b1a77f6aa5a4e9cf80a2ae378526237da9be223af1627e2f5b0fa",
+    "contains_deno_global": false,
+    "clean_npm_ci": "passed"
+  },
+  "static_checks": [
+    "lock",
+    "clean_install",
+    "format",
+    "lint",
+    "typecheck",
+    "unit",
+    "runtime",
+    "diff"
+  ],
+  "unit_tests": {
+    "passed": 36,
+    "failed": 0
+  },
+  "workerd_tests": {
+    "passed": 7,
+    "failed": 0,
+    "checks": [
+      "raw download, HEAD, ETag 304 and Range 206",
+      "gzip binary passthrough with byte equality after decompression",
+      "gzip HTML decompression, same-origin rewrite and CSP",
+      "release redirect preserves proxy origin and query parameters",
+      "rewritten script ETag, 304 and HEAD length",
+      "Git upload-pack binary POST body",
+      "160 MiB binary response streamed through workerd"
+    ]
+  },
+  "browser_tests": {
+    "environment": "WSL Linux Chromium 156.0.8078.4",
+    "network_rule": "abort all browser HTTP(S) requests outside the local Pages proxy origin",
+    "passed": 3,
+    "failed": 0,
+    "pages": [
+      {
+        "path": "/intel/AI-Playground/releases/tag/v3.2.1-beta",
+        "passed": true,
+        "checks": [
+          "main HTML and browser proxy script loaded",
+          "release attachments and dynamic fetch stay on proxy origin",
+          "stylesheets and dependencies remain same-origin; no CSP or JS errors"
+        ],
+        "external_requests": 0,
+        "csp_violations": 0,
+        "javascript_errors": 0,
+        "responses_by_type": {
+          "document": 1,
+          "script": 106,
+          "stylesheet": 22,
+          "image": 4,
+          "fetch": 3,
+          "manifest": 1
+        }
+      },
+      {
+        "path": "/intel/AI-Playground",
+        "passed": true,
+        "checks": [
+          "main HTML and browser proxy script loaded",
+          "dynamically created README image loads through proxy",
+          "repository link navigates to README file viewer through proxy",
+          "stylesheets and dependencies remain same-origin; no CSP or JS errors"
+        ],
+        "external_requests": 0,
+        "csp_violations": 0,
+        "javascript_errors": 0,
+        "responses_by_type": {
+          "document": 1,
+          "script": 135,
+          "stylesheet": 24,
+          "image": 35,
+          "fetch": 15,
+          "manifest": 1
+        }
+      },
+      {
+        "path": "/toponehhh/TigbuhyxorP/blob/main/main.ts",
+        "passed": true,
+        "checks": [
+          "main HTML and browser proxy script loaded",
+          "browser blob URL renders file viewer",
+          "stylesheets and dependencies remain same-origin; no CSP or JS errors"
+        ],
+        "external_requests": 0,
+        "csp_violations": 0,
+        "javascript_errors": 0,
+        "responses_by_type": {
+          "document": 1,
+          "script": 130,
+          "stylesheet": 24,
+          "fetch": 7,
+          "image": 1,
+          "manifest": 1
+        }
+      }
+    ]
+  },
+  "real_github_http": {
+    "passed": 15,
+    "failed": 0,
+    "checks": [
+      "ordinary_download",
+      "ordinary_download_repeat",
+      "etag_match",
+      "etag_match_repeat",
+      "etag_weak_match",
+      "etag_list_match",
+      "etag_wildcard",
+      "etag_mismatch",
+      "head",
+      "head_etag_match",
+      "modified_since",
+      "range",
+      "range_if_range_match",
+      "range_if_range_mismatch",
+      "ordinary_download_after_conditions"
+    ]
+  },
+  "binary_resume": {
+    "passed": true,
+    "size": 2566310,
+    "sha256": "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e",
+    "range_statuses": [
+      206,
+      206
+    ],
+    "redirects": [
+      {
+        "status": 302,
+        "path": "/__github__/release-assets.githubusercontent.com/github-production-release-asset/53631945/c3fb96a4-463b-40d5-8a6b-ee77f4cd30fd"
+      },
+      {
+        "status": 302,
+        "path": "/__github__/release-assets.githubusercontent.com/github-production-release-asset/53631945/c3fb96a4-463b-40d5-8a6b-ee77f4cd30fd"
+      }
+    ]
+  },
+  "intel_installer_head": {
+    "passed": true,
+    "method": "HEAD",
+    "status": 200,
+    "redirects": [
+      {
+        "status": 302,
+        "path": "/__github__/release-assets.githubusercontent.com/github-production-release-asset/826984591/ffdc6b29-17af-4795-9c25-e2d02ae74fad"
+      }
+    ],
+    "large_file_body_downloaded": false
+  },
+  "git": {
+    "passed": true,
+    "clone": "shallow Git Smart HTTP via Pages local preview",
+    "fetch": "unshallow",
+    "fsck": "passed",
+    "head": "7fd1a60b01f91b314f59955a4e4d4e80d8edf11d",
+    "commits": 3
+  },
+  "boundaries": [
+    "No production pages.dev deployment or Cloudflare CDN was verified in this run.",
+    "All code builds and tests ran in WSL/Linux. Windows CMD Chromium was used only to read Cloudflare documentation.",
+    "Local browser isolation does not emulate Shanghai Telecom-to-Cloudflare connectivity or enforce production plan CPU/request quotas.",
+    "The optional anonymous GitHub navigation payload endpoint may return upstream 404; required page assets and tested navigation passed."
+  ]
+}

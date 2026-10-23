@@ -1,0 +1,22 @@
+{
+  "name": "tigbuhyxorp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.18.0" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build && wrangler pages dev dist",
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "check": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test main_test.ts web_proxy_test.ts worker_test.ts",
+    "test:runtime": "npm run build && node --test scripts/cloudflare_runtime_test.mjs"
+  },
+  "dependencies": { "parse5": "8.0.0" },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "miniflare": "5.20261019.2-beta",
+    "typescript": "7.0.2",
+    "wrangler": "4.152.0"
+  }
+}

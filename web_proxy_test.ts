@@ -1,12 +1,13 @@
+import { test } from "node:test";
 import { equal, ok } from "node:assert/strict";
-import { createProxy } from "./main.ts";
+import { createProxy } from "./proxy.ts";
 import { rewriteAbsoluteUrls, rewriteUrl } from "./proxy_urls.ts";
 import { rewriteCss, rewriteHtml } from "./web_proxy.ts";
 
 const ORIGIN = "https://proxy.example";
 const PAGE = new URL("https://github.com/intel/AI-Playground/releases/tag/v3.2.1-beta");
 
-Deno.test("浏览器保留 blob 文件查看页，命令行继续下载 raw", async () => {
+test("浏览器保留 blob 文件查看页，命令行继续下载 raw", async () => {
   for (const browser of [false, true]) {
     const proxy = createProxy({
       fetcher: (target) => {
@@ -26,7 +27,7 @@ Deno.test("浏览器保留 blob 文件查看页，命令行继续下载 raw", as
   }
 });
 
-Deno.test("静态资源路由转发到受限 CDN，保留浏览接口头但不泄露 Cookie", async () => {
+test("静态资源路由转发到受限 CDN，保留浏览接口头但不泄露 Cookie", async () => {
   const proxy = createProxy({
     fetcher: (target, init) => {
       equal(target.href, "https://github.githubassets.com/assets/site.css");
@@ -51,7 +52,7 @@ Deno.test("静态资源路由转发到受限 CDN，保留浏览接口头但不�
   equal(await response.text(), "css");
 });
 
-Deno.test("Release HTML、JSON、图片与 CSP 统一使用代理同源，脚本先于站点脚本执行", async () => {
+test("Release HTML、JSON、图片与 CSP 统一使用代理同源，脚本先于站点脚本执行", async () => {
   const source = `<!doctype html><html><head>
     <link rel="stylesheet" href="https://github.githubassets.com/assets/site.css" integrity="old">
     <script src="https://github.githubassets.com/assets/site.js" integrity="old"></script>
@@ -94,7 +95,7 @@ Deno.test("Release HTML、JSON、图片与 CSP 统一使用代理同源，脚本
   ok(nonce && response.headers.get("content-security-policy")?.includes(`'nonce-${nonce}'`));
 });
 
-Deno.test("懒加载附件片段和 template 内资源改写，不重复注入浏览脚本", () => {
+test("懒加载附件片段和 template 内资源改写，不重复注入浏览脚本", () => {
   const result = rewriteHtml(
     `<div><template><img src="https://avatars.githubusercontent.com/u/1"></template><a href="/owner/repo/releases/download/v1/a.zip">file</a></div>`,
     PAGE,
@@ -106,7 +107,7 @@ Deno.test("懒加载附件片段和 template 内资源改写，不重复注入�
   ok(!result.body.includes("/__proxy__/browser.js"));
 });
 
-Deno.test("仓库内 AJAX 跳转的 JSON 所含 HTML 图片地址也改写", async () => {
+test("仓库内 AJAX 跳转的 JSON 所含 HTML 图片地址也改写", async () => {
   const proxy = createProxy({
     fetcher: (_target, init) => {
       equal(new Headers(init.headers).get("if-none-match"), null);
@@ -130,7 +131,7 @@ Deno.test("仓库内 AJAX 跳转的 JSON 所含 HTML 图片地址也改写", asy
   equal(body.path, `${ORIGIN}/owner/repo/blob/main/readme.md`);
 });
 
-Deno.test("CSS 相对字体、根路径、import 和图片保持正确 CDN 上游", () => {
+test("CSS 相对字体、根路径、import 和图片保持正确 CDN 上游", () => {
   const target = new URL("https://github.githubassets.com/assets/site.css");
   const result = rewriteCss(
     `@import "./other.css"; a{src:url(../fonts/a.woff2);background:url('/assets/a.png')} b{background:url(data:image/png;base64,abc)}`,
@@ -143,7 +144,7 @@ Deno.test("CSS 相对字体、根路径、import 和图片保持正确 CDN 上�
   ok(result.includes("url(data:image/png;base64,abc)"));
 });
 
-Deno.test("JS/JSON 地址改写保留转义、模板变量和未知主机", () => {
+test("JS/JSON 地址改写保留转义、模板变量和未知主机", () => {
   const source = String
     .raw`const a="https:\/\/github.com\/owner\/repo";const b=\`https://api.github.com/repos/\${owner}\`;const c="https://github.com.evil.example/x";`;
   const rewritten = rewriteAbsoluteUrls(source, PAGE, new URL(ORIGIN));
@@ -160,7 +161,7 @@ Deno.test("JS/JSON 地址改写保留转义、模板变量和未知主机", () =
   );
 });
 
-Deno.test("改写脚本使用代理自身 ETag，并在匹配时返回 304 零正文", async () => {
+test("改写脚本使用代理自身 ETag，并在匹配时返回 304 零正文", async () => {
   const proxy = createProxy({
     fetcher: (_target, init) => {
       equal(new Headers(init.headers).get("if-none-match"), null);
@@ -187,7 +188,7 @@ Deno.test("改写脚本使用代理自身 ETag，并在匹配时返回 304 零�
   equal(second.headers.get("deno-cdn-cache-control"), "no-store");
 });
 
-Deno.test("浏览器代理脚本可访问，但网页 POST 和未知资源主机仍拒绝", async () => {
+test("浏览器代理脚本可访问，但网页 POST 和未知资源主机仍拒绝", async () => {
   const proxy = createProxy({
     fetcher: () => {
       throw new Error("should not fetch");
@@ -206,7 +207,7 @@ Deno.test("浏览器代理脚本可访问，但网页 POST 和未知资源主机
   await unknown.text();
 });
 
-Deno.test("原始文件和 Release 附件保持原始 HTML/JS/JSON 字节与验证器", async () => {
+test("原始文件和 Release 附件保持原始 HTML/JS/JSON 字节与验证器", async () => {
   for (
     const path of [
       "/__github__/raw.githubusercontent.com/owner/repo/main/a.html",
@@ -235,7 +236,7 @@ Deno.test("原始文件和 Release 附件保持原始 HTML/JS/JSON 字节与验�
   }
 });
 
-Deno.test("改写资源 HEAD 与 GET 的长度和 ETag 一致，弱 ETag 不满足 If-Match", async () => {
+test("改写资源 HEAD 与 GET 的长度和 ETag 一致，弱 ETag 不满足 If-Match", async () => {
   const proxy = createProxy({
     fetcher: (_target, init) => {
       equal(init.method, "GET");

@@ -1,9 +1,10 @@
+import { test } from "node:test";
 import { deepEqual, equal, ok } from "node:assert/strict";
-import { createProxy } from "./main.ts";
+import { createProxy } from "./proxy.ts";
 
 const ORIGIN = "https://proxy.example";
 
-Deno.test("下载路径、编码和查询参数保持不变", async () => {
+test("下载路径、编码和查询参数保持不变", async () => {
   const path = "/owner/repo/releases/download/v1/a%20b.zip?download=1&key=a%2Fb";
   const proxy = createProxy({
     fetcher: (target, init) => {
@@ -17,7 +18,7 @@ Deno.test("下载路径、编码和查询参数保持不变", async () => {
   equal(await (await proxy(new Request(`${ORIGIN}${path}`))).text(), "file");
 });
 
-Deno.test("blob 链接转换为 raw，保留含斜杠的分支路径", async () => {
+test("blob 链接转换为 raw，保留含斜杠的分支路径", async () => {
   const proxy = createProxy({
     fetcher: (target) => {
       equal(target.href, "https://github.com/owner/repo/raw/feature/next/a%23b.ts?raw=true");
@@ -30,7 +31,7 @@ Deno.test("blob 链接转换为 raw，保留含斜杠的分支路径", async () 
   equal(await response.text(), "source");
 });
 
-Deno.test("Git upload-pack POST 保留请求流、协议头和压缩二进制字节", async () => {
+test("Git upload-pack POST 保留请求流、协议头和压缩二进制字节", async () => {
   const body = new Uint8Array([0x1f, 0x8b, 0x00, 0xff, 0x80]);
   const pack = new Uint8Array([0x50, 0x41, 0x43, 0x4b, 0x00, 0xff]);
   const request = new Request(`${ORIGIN}/owner/repo.git/git-upload-pack`, {
@@ -69,7 +70,7 @@ Deno.test("Git upload-pack POST 保留请求流、协议头和压缩二进制字
   deepEqual(new Uint8Array(await response.arrayBuffer()), pack);
 });
 
-Deno.test("Range、条件请求头、206 和文件名原样转发", async () => {
+test("Range、条件请求头、206 和文件名原样转发", async () => {
   const proxy = createProxy({
     fetcher: (_target, init) => {
       const headers = new Headers(init.headers);
@@ -103,7 +104,7 @@ Deno.test("Range、条件请求头、206 和文件名原样转发", async () => 
   equal(await response.text(), "abcdef");
 });
 
-Deno.test("HEAD 和 304 保留元数据且没有响应体", async () => {
+test("HEAD 和 304 保留元数据且没有响应体", async () => {
   for (const method of ["HEAD", "GET"]) {
     const proxy = createProxy({
       fetcher: (_target, init) => {
@@ -124,7 +125,7 @@ Deno.test("HEAD 和 304 保留元数据且没有响应体", async () => {
   }
 });
 
-Deno.test("普通下载合并 Vary 并保留上游缓存策略和 ETag", async () => {
+test("普通下载合并 Vary 并保留上游缓存策略和 ETag", async () => {
   const proxy = createProxy({
     fetcher: () =>
       Promise.resolve(
@@ -157,7 +158,7 @@ Deno.test("普通下载合并 Vary 并保留上游缓存策略和 ETag", async (
   equal(await response.text(), "file");
 });
 
-Deno.test("带条件的 200、304、412 不进入 CDN 且原样转发上游结果", async () => {
+test("带条件的 200、304、412 不进入 CDN 且原样转发上游结果", async () => {
   for (
     const [name, value, status] of [
       ["if-none-match", 'W/"v1", "v2"', 304],
@@ -198,7 +199,7 @@ Deno.test("带条件的 200、304、412 不进入 CDN 且原样转发上游结�
   }
 });
 
-Deno.test("Vary 星号保持不变，普通下载不被强制禁用 CDN 缓存", async () => {
+test("Vary 星号保持不变，普通下载不被强制禁用 CDN 缓存", async () => {
   const proxy = createProxy({
     fetcher: () => Promise.resolve(new Response("file", { headers: { "vary": "*" } })),
   });
@@ -208,7 +209,7 @@ Deno.test("Vary 星号保持不变，普通下载不被强制禁用 CDN 缓存",
   equal(await response.text(), "file");
 });
 
-Deno.test("GitHub / raw / archive / Release 跳转继续经过代理", async () => {
+test("GitHub / raw / archive / Release 跳转继续经过代理", async () => {
   const redirects = [
     [
       301,
@@ -242,7 +243,7 @@ Deno.test("GitHub / raw / archive / Release 跳转继续经过代理", async () 
   }
 });
 
-Deno.test("认证头只发往 github.com，Cookie 和代理站点信息不转发", async () => {
+test("认证头只发往 github.com，Cookie 和代理站点信息不转发", async () => {
   for (
     const path of [
       "/owner/repo.git/info/refs?service=git-upload-pack",
@@ -277,7 +278,7 @@ Deno.test("认证头只发往 github.com，Cookie 和代理站点信息不转发
   }
 });
 
-Deno.test("拒绝未知上游域名，包括域名后缀、端口和 userinfo 绕过", async () => {
+test("拒绝未知上游域名，包括域名后缀、端口和 userinfo 绕过", async () => {
   let calls = 0;
   const proxy = createProxy({
     fetcher: () => {
@@ -300,7 +301,7 @@ Deno.test("拒绝未知上游域名，包括域名后缀、端口和 userinfo �
   equal(calls, 0);
 });
 
-Deno.test("双斜杠路径不能改变 github.com 上游", async () => {
+test("双斜杠路径不能改变 github.com 上游", async () => {
   const proxy = createProxy({
     fetcher: (target) => {
       equal(target.hostname, "github.com");
@@ -311,7 +312,7 @@ Deno.test("双斜杠路径不能改变 github.com 上游", async () => {
   equal(await (await proxy(new Request(`${ORIGIN}//evil.example/path`))).text(), "ok");
 });
 
-Deno.test("拒绝跳转到任意主机、HTTP、其他端口或带凭据的地址", async () => {
+test("拒绝跳转到任意主机、HTTP、其他端口或带凭据的地址", async () => {
   for (
     const location of [
       "https://evil.example/file",
@@ -341,7 +342,7 @@ Deno.test("拒绝跳转到任意主机、HTTP、其他端口或带凭据的地�
   }
 });
 
-Deno.test("清理连接专用请求头和响应头", async () => {
+test("清理连接专用请求头和响应头", async () => {
   const proxy = createProxy({
     fetcher: (_target, init) => {
       const headers = new Headers(init.headers);
@@ -375,7 +376,7 @@ Deno.test("清理连接专用请求头和响应头", async () => {
   equal(await response.text(), "ok");
 });
 
-Deno.test("上游错误状态和正文原样返回", async () => {
+test("上游错误状态和正文原样返回", async () => {
   for (const status of [401, 403, 404, 416, 429]) {
     const proxy = createProxy({
       fetcher: () => Promise.resolve(new Response("upstream error", { status })),
@@ -386,7 +387,7 @@ Deno.test("上游错误状态和正文原样返回", async () => {
   }
 });
 
-Deno.test("fetch 自动解压后的响应不带旧压缩编码或长度", async () => {
+test("fetch 自动解压后的响应不带旧压缩编码或长度", async () => {
   const proxy = createProxy({
     fetcher: () =>
       Promise.resolve(
@@ -401,7 +402,7 @@ Deno.test("fetch 自动解压后的响应不带旧压缩编码或长度", async 
   equal(await response.text(), "already decoded");
 });
 
-Deno.test("收到响应头就返回流，响应体未完成时不会缓冲或触发响应头超时", async () => {
+test("收到响应头就返回流，响应体未完成时不会缓冲或触发响应头超时", async () => {
   let controller!: ReadableStreamDefaultController<Uint8Array>;
   let upstreamSignal: AbortSignal | null | undefined;
   const stream = new ReadableStream<Uint8Array>({
@@ -426,7 +427,7 @@ Deno.test("收到响应头就返回流，响应体未完成时不会缓冲或触
   deepEqual(new Uint8Array(await response.arrayBuffer()), new Uint8Array([0x00, 0xff, 0x80]));
 });
 
-Deno.test("等待响应头超时返回 504，连接异常返回 502", async () => {
+test("等待响应头超时返回 504，连接异常返回 502", async () => {
   const timeoutProxy = createProxy({
     headerTimeoutMs: 5,
     fetcher: (_target, init) =>
@@ -444,7 +445,7 @@ Deno.test("等待响应头超时返回 504，连接异常返回 502", async () =
   await failed.text();
 });
 
-Deno.test("客户端中断会传递到上游信号", async () => {
+test("客户端中断会传递到上游信号", async () => {
   const client = new AbortController();
   let upstreamSignal: AbortSignal | null | undefined;
   const proxy = createProxy({
@@ -461,7 +462,7 @@ Deno.test("客户端中断会传递到上游信号", async () => {
   await response.text();
 });
 
-Deno.test("其他 POST、写入方法和 Git push 被拒绝，首页显示用法", async () => {
+test("其他 POST、写入方法和 Git push 被拒绝，首页显示用法", async () => {
   let calls = 0;
   const proxy = createProxy({
     fetcher: () => {

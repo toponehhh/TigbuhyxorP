@@ -123,6 +123,7 @@ export async function rewriteWebResponse(
   headers: Headers,
   target: URL,
   request: Request,
+  cdnCacheControlHeader = "deno-cdn-cache-control",
 ): Promise<Response | null> {
   const type = (headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
   const html = type === "text/html";
@@ -148,7 +149,7 @@ export async function rewriteWebResponse(
     if (result.fullDocument) headers.set("content-security-policy", csp(nonce));
     else headers.delete("content-security-policy");
     headers.set("cache-control", "no-store");
-    headers.set("deno-cdn-cache-control", "no-store");
+    headers.set(cdnCacheControlHeader, "no-store");
   } else {
     body = css
       ? rewriteCss(source, target, incoming)
@@ -159,6 +160,7 @@ export async function rewriteWebResponse(
   for (
     const name of [
       "content-length",
+      "content-encoding",
       "etag",
       "last-modified",
       "accept-ranges",
