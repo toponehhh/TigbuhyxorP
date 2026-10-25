@@ -1,6 +1,6 @@
 # GitHub 网页、下载和 Git clone 代理
 
-已部署服务：[tigbuhyxorp.pages.dev](https://tigbuhyxorp.pages.dev/)。
+已部署服务：[ghpc.pages.dev](https://ghpc.pages.dev/)。
 
 默认部署到 **Cloudflare Pages**。把 URL 中的 `github.com` 替换成自己的
 `项目名.pages.dev`，路径和查询参数保持不变。 支持公开仓库网页、Release 附件、原始文件、源码压缩包和
@@ -16,7 +16,7 @@ Token、KV、R2 或数据库。
 
 1. 在 Cloudflare 的 **Workers & Pages** 中创建 **Pages** 项目，连接本仓库，生产分支选择 `main`。
 2. 项目名与 `wrangler.toml` 中的 `name` 保持一致，当前默认是
-   `tigbuhyxorp`。若使用其他项目名，请同步修改配置。
+   `ghpc`。若使用其他项目名，请同步修改配置。
 3. 使用以下构建设置：
 
 | 设置                   | 值                              |
@@ -43,7 +43,7 @@ Pages 会根据 `package.json` 和 `package-lock.json` 安装依赖。需要手�
 npm ci
 npx wrangler login
 # 首次创建项目时执行；名称应与 wrangler.toml 一致
-npx wrangler pages project create tigbuhyxorp --production-branch main
+npx wrangler pages project create ghpc --production-branch main
 npm run deploy
 ```
 
