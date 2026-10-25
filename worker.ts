@@ -21,8 +21,16 @@ export function createPagesProxy(fetcher: Fetcher = fetch) {
       const options: RequestInit = bypassCache ? { ...init, cache: "no-store" } : init;
       const response = await fetcher(url, options);
       const encoding = response.headers.get("content-encoding")?.trim().toLowerCase();
-      if (headers.has("range") && response.status === 206 && encoding && encoding !== "identity") {
-        // Cloudflare 可能协商到压缩表示；其局部压缩流无法独立解压成原文件的字节范围。
+      const type = (response.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
+      const textRepresentation = type.startsWith("text/") ||
+        ["application/json", "application/javascript", "application/xml"].includes(type) ||
+        type.endsWith("+json") || type.endsWith("+xml");
+      if (
+        headers.has("range") && response.status === 206 &&
+        ((encoding && encoding !== "identity") || textRepresentation)
+      ) {
+        // 缓存/解压层可能不公开 Content-Encoding；文本的范围也按可能压缩处理。
+        // 压缩表示的局部流无法独立解压成原文件的字节范围。
         // 重新获取完整表示，以合法的 200 返回，避免 206 空正文/损坏片段被客户端追加。
         await response.body?.cancel();
         headers.delete("range");

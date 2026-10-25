@@ -141,9 +141,9 @@ PLAYWRIGHT_MODULE_PATH=/tmp/tigbuh-browser-tests/node_modules/playwright/index.m
   304。
 - Workers 的未修改压缩响应保留 Content-Encoding；改写正文后移除旧编码和长度。不会套用 Deno fetch
   自动解压的假设。
-- 若 Cloudflare 上游返回压缩的 206，代理会重新获取完整文件并返回
-  200，避免无法独立解压的片段被误当成原文件字节。 此时客户端应完整下载；未压缩附件的 206
-  和断点续传照常转发。
+- 对压缩响应或可压缩文本的 206，代理会重新获取完整文件并返回
+  200，避免编码元数据缺失时，无法独立解压的片段被误当成原文件字节。
+  此时客户端应完整下载；未压缩附件的 206 和断点续传照常转发。
 
 参见 [Workers fetch 与压缩](https://developers.cloudflare.com/workers/runtime-apis/fetch/) 和
 [流式转发](https://developers.cloudflare.com/workers/runtime-apis/streams/)。

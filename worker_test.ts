@@ -156,3 +156,21 @@ test("Pages 压缩 206 重新获取完整表示，避免转发损坏的原文件
   equal(calls, 2);
   equal(cancelled, true);
 });
+
+test("Pages 文本 206 即使没有编码头也重新获取完整表示", async () => {
+  let calls = 0;
+  const proxy = createPagesProxy((_target, init) => {
+    const ranged = new Headers(init.headers).has("range");
+    calls++;
+    return Promise.resolve(
+      new Response(ranged ? "partial" : "complete text", {
+        status: ranged ? 206 : 200,
+        headers: { "content-type": "text/plain" },
+      }),
+    );
+  });
+  const response = await proxy(new Request(ORIGIN + RAW, { headers: { "range": "bytes=0-15" } }));
+  equal(response.status, 200);
+  equal(await response.text(), "complete text");
+  equal(calls, 2);
+});

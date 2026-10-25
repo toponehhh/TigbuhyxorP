@@ -25,6 +25,12 @@ const fixture = `export default {
       });
       return new Response(bytes, {headers:{"content-type":"application/octet-stream","content-encoding":"gzip"},encodeBody:"manual"});
     }
+    if (path.endsWith("/text-range.txt")) {
+      const ranged = request.headers.has("range");
+      return new Response(ranged ? "partial" : "complete text", {
+        status:ranged ? 206 : 200,headers:{"content-type":"text/plain"}
+      });
+    }
     if (path === "/owner/repo") return new Response(new Uint8Array(${JSON.stringify(htmlGzip)}), {
       headers: {"content-type":"text/html", "content-encoding":"gzip", "etag":"old"}, encodeBody:"manual"
     });
@@ -130,6 +136,17 @@ test("workerd: 压缩 206 改为完整 200，不返回无法解压的局部片�
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("content-range"), null);
   assert.deepEqual(new Uint8Array(await response.arrayBuffer()), binary);
+});
+
+test("workerd: 文本范围缺少编码元数据时返回完整原文", async () => {
+  const response = await fetch(
+    origin + "/__github__/raw.githubusercontent.com/owner/repo/main/text-range.txt",
+    {
+      headers: { "range": "bytes=0-15" },
+    },
+  );
+  assert.equal(response.status, 200);
+  assert.equal(await response.text(), "complete text");
 });
 
 test("workerd: 压缩 HTML 解压后改写并移除原来的编码和 ETag", async () => {
