@@ -116,3 +116,43 @@ test("Pages 改写资源的代理 ETag 可在条件请求中返回 304", async (
   equal(second.headers.get("etag"), etag);
   equal(second.headers.get("cloudflare-cdn-cache-control"), "no-store");
 });
+
+test("Pages 压缩 206 重新获取完整表示，避免转发损坏的原文件范围", async () => {
+  let calls = 0;
+  let cancelled = false;
+  const proxy = createPagesProxy((_target, init) => {
+    const headers = new Headers(init.headers);
+    equal(init.cache, "no-store");
+    equal(headers.get("if-match"), '"v1"');
+    if (++calls === 1) {
+      equal(headers.get("range"), "bytes=0-15");
+      equal(headers.get("if-range"), '"v1"');
+      return Promise.resolve(
+        new Response(
+          new ReadableStream({
+            cancel() {
+              cancelled = true;
+            },
+          }),
+          {
+            status: 206,
+            headers: { "content-encoding": "gzip", "content-range": "bytes 0-15/100" },
+          },
+        ),
+      );
+    }
+    equal(headers.get("range"), null);
+    equal(headers.get("if-range"), null);
+    return Promise.resolve(new Response("complete file", { headers: { "etag": '"v1"' } }));
+  });
+  const response = await proxy(
+    new Request(ORIGIN + RAW, {
+      headers: { "range": "bytes=0-15", "if-range": '"v1"', "if-match": '"v1"' },
+    }),
+  );
+  equal(response.status, 200);
+  equal(response.headers.get("content-range"), null);
+  equal(await response.text(), "complete file");
+  equal(calls, 2);
+  equal(cancelled, true);
+});

@@ -14,11 +14,22 @@ export function createPagesProxy(fetcher: Fetcher = fetch) {
   const proxy = createProxy({
     cdnCacheControlHeader: "cloudflare-cdn-cache-control",
     preserveContentEncoding: true,
-    fetcher: (url, init) => {
+    fetcher: async (url, init) => {
       const headers = new Headers(init.headers);
       const bypassCache = init.method !== "GET" ||
         conditionalHeaders.some((name) => headers.has(name));
-      return fetcher(url, bypassCache ? { ...init, cache: "no-store" } : init);
+      const options: RequestInit = bypassCache ? { ...init, cache: "no-store" } : init;
+      const response = await fetcher(url, options);
+      const encoding = response.headers.get("content-encoding")?.trim().toLowerCase();
+      if (headers.has("range") && response.status === 206 && encoding && encoding !== "identity") {
+        // Cloudflare 可能协商到压缩表示；其局部压缩流无法独立解压成原文件的字节范围。
+        // 重新获取完整表示，以合法的 200 返回，避免 206 空正文/损坏片段被客户端追加。
+        await response.body?.cancel();
+        headers.delete("range");
+        headers.delete("if-range");
+        return fetcher(url, { ...options, headers, cache: "no-store" });
+      }
+      return response;
     },
   });
   return async (request: Request): Promise<Response> => {

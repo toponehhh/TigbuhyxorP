@@ -18,6 +18,13 @@ const fixture = `export default {
 }), {
       headers: {"content-type":"application/octet-stream", "content-encoding":"gzip"}, encodeBody:"manual"
     });
+    if (path.endsWith("/compressed-range.bin")) {
+      const bytes = new Uint8Array(${JSON.stringify(binaryGzip)});
+      if (request.headers.has("range")) return new Response(bytes.slice(0,16), {
+        status:206,headers:{"content-type":"application/octet-stream","content-encoding":"gzip","content-range":"bytes 0-15/" + bytes.length},encodeBody:"manual"
+      });
+      return new Response(bytes, {headers:{"content-type":"application/octet-stream","content-encoding":"gzip"},encodeBody:"manual"});
+    }
     if (path === "/owner/repo") return new Response(new Uint8Array(${JSON.stringify(htmlGzip)}), {
       headers: {"content-type":"text/html", "content-encoding":"gzip", "etag":"old"}, encodeBody:"manual"
     });
@@ -110,6 +117,18 @@ test("workerd: 压缩二进制响应不会丢失编码或重复压缩", async ()
     origin + "/__github__/raw.githubusercontent.com/owner/repo/main/compressed.bin",
   );
   assert.equal(response.headers.get("content-encoding"), "gzip");
+  assert.deepEqual(new Uint8Array(await response.arrayBuffer()), binary);
+});
+
+test("workerd: 压缩 206 改为完整 200，不返回无法解压的局部片段", async () => {
+  const response = await fetch(
+    origin + "/__github__/raw.githubusercontent.com/owner/repo/main/compressed-range.bin",
+    {
+      headers: { "range": "bytes=0-15", "accept-encoding": "identity" },
+    },
+  );
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-range"), null);
   assert.deepEqual(new Uint8Array(await response.arrayBuffer()), binary);
 });
 
